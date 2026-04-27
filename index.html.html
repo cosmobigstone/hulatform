@@ -3,190 +3,415 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Hulatform — AI가 만드는 신뢰할 수 있는 비즈니스 아이덴티티.">
-<title>Hulatform — AI Business Identity Platform</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
+<meta name="description" content="Hulatform — AI 기반 비즈니스 아이덴티티 플랫폼. 명함 스캔 하나로 프로필·포트폴리오·글로벌 네트워크까지.">
+<meta property="og:title" content="Hulatform — AI Business Identity Platform">
+<meta property="og:url" content="https://hulatform.com">
+<title>Hulatform | AI 비즈니스 아이덴티티 플랫폼</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
 
 <style>
-:root{
-  --bg:#080810;--bg2:#0f0f1a;--bg3:#14141f;--surface:#1a1a28;
-  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
-  --text:#f0eff8;--muted:#8b8aa0;
-  --accent:#7c6aff;--accent2:#a78bfa;
-  --teal:#2dd4bf;--gold:#f4c55a;--green:#34d399;--red:#f87171;
-  --serif:'Instrument Serif',Georgia,serif;
-  --sans:'DM Sans',system-ui,sans-serif;
+/* ── Design Tokens (from DESIGN.md) ─────────────────── */
+:root {
+  --primary:              #004ECB;
+  --primary-container:    #0064FF;
+  --on-primary:           #ffffff;
+  --on-primary-container: #f5f5ff;
+  --inverse-primary:      #b3c5ff;
+  --primary-fixed:        #dbe1ff;
+  --primary-fixed-dim:    #b3c5ff;
+
+  --secondary:            #585e6c;
+  --secondary-container:  #dde2f3;
+  --on-secondary:         #ffffff;
+
+  --surface:              #f8f9ff;
+  --surface-bright:       #f8f9ff;
+  --surface-dim:          #d0dbed;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low:    #eef4ff;
+  --surface-container:        #e5eeff;
+  --surface-container-high:   #dee9fb;
+  --surface-container-highest:#d8e3f5;
+  --surface-variant:      #d8e3f5;
+
+  --on-surface:           #111c29;
+  --on-surface-variant:   #424656;
+  --outline:              #737687;
+  --outline-variant:      #c2c6d8;
+
+  --error:                #ba1a1a;
+  --error-container:      #ffdad6;
+
+  --background:           #f8f9ff;
+  --on-background:        #111c29;
+
+  --radius-sm:   0.25rem;
+  --radius-md:   0.75rem;
+  --radius-lg:   1rem;
+  --radius-xl:   1.5rem;
+  --radius-full: 9999px;
+
+  --shadow-ambient: 0 8px 40px rgba(0,100,255,0.06);
+  --shadow-card:    0 2px 12px rgba(17,28,41,0.06), 0 1px 3px rgba(17,28,41,0.04);
+  --shadow-float:   0 20px 60px rgba(0,100,255,0.12);
+
+  --font: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:0.025;pointer-events:none;z-index:0}
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:20px 48px;background:rgba(8,8,16,0.7);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
-.logo{font-family:var(--serif);font-size:22px;letter-spacing:-0.02em;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:10px}
-.logo-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 2.5s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(0.85)}}
-.nav-links{display:flex;align-items:center;gap:32px}
-.nav-links a{color:var(--muted);font-size:14px;text-decoration:none;transition:color .2s}
-.nav-links a:hover{color:var(--text)}
-.lang-toggle{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px;display:flex;gap:2px}
-.lang-btn{background:none;border:none;cursor:pointer;padding:4px 10px;border-radius:16px;font-size:12px;font-family:var(--sans);color:var(--muted);transition:all .2s}
-.lang-btn.active{background:var(--accent);color:#fff}
-.nav-cta{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:14px;font-family:var(--sans);cursor:pointer;font-weight:500;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
-.nav-cta:hover{background:var(--accent2);transform:translateY(-1px)}
-
-/* HERO */
-.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:140px 24px 80px;overflow:hidden;text-align:center}
-.hero-glow{position:absolute;width:800px;height:800px;background:radial-gradient(circle,rgba(124,106,255,0.15) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-55%);pointer-events:none}
-.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,106,255,0.12);border:1px solid rgba(124,106,255,0.3);border-radius:100px;padding:6px 16px;font-size:13px;color:var(--accent2);margin-bottom:32px;animation:fadeUp 0.6s ease both}
-.badge-dot{width:6px;height:6px;background:var(--teal);border-radius:50%;animation:pulse 2s infinite}
-.hero h1{font-family:var(--serif);font-size:clamp(48px,8vw,88px);line-height:1.08;letter-spacing:-0.03em;max-width:860px;margin-bottom:28px;animation:fadeUp 0.7s ease 0.1s both}
-.hero h1 em{font-style:italic;background:linear-gradient(135deg,var(--accent) 0%,var(--teal) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-sub{font-size:18px;color:var(--muted);max-width:520px;line-height:1.7;margin-bottom:48px;animation:fadeUp 0.7s ease 0.2s both;font-weight:300}
-.hero-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;animation:fadeUp 0.7s ease 0.3s both;margin-bottom:72px}
-.btn-primary{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 28px;font-size:16px;font-family:var(--sans);cursor:pointer;font-weight:500;transition:all .25s;text-decoration:none;display:inline-flex;align-items:center;gap:8px;box-shadow:0 0 40px rgba(124,106,255,0.3)}
-.btn-primary:hover{background:var(--accent2);transform:translateY(-2px)}
-.btn-ghost{background:none;color:var(--muted);border:1px solid var(--border2);border-radius:10px;padding:14px 28px;font-size:16px;font-family:var(--sans);cursor:pointer;transition:all .25s;text-decoration:none}
-.btn-ghost:hover{color:var(--text);background:var(--surface)}
-
-/* BROWSER PREVIEW */
-.hero-preview{animation:fadeUp 0.8s ease 0.4s both;width:100%;max-width:720px}
-.preview-window{background:var(--bg3);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,0.6)}
-.preview-bar{background:var(--bg2);padding:14px 20px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
-.dot{width:10px;height:10px;border-radius:50%}
-.preview-url{flex:1;background:var(--surface);border-radius:6px;padding:5px 12px;font-size:12px;color:var(--muted);margin-left:8px}
-.preview-content{display:grid;grid-template-columns:1fr auto 1fr}
-.preview-left,.preview-right{padding:32px}
-.preview-left{border-right:1px solid var(--border)}
-.scan-area{border:1.5px dashed rgba(124,106,255,0.4);border-radius:12px;padding:24px;display:flex;flex-direction:column;align-items:center;gap:12px;background:rgba(124,106,255,0.04)}
-.scan-icon{font-size:32px;opacity:0.6}
-.scan-lbl{font-size:12px;color:var(--muted);text-align:center}
-.scan-lbl strong{color:var(--accent2);display:block;font-size:14px;margin-bottom:4px}
-.arrow-mid{display:flex;align-items:center;justify-content:center;padding:0 16px;color:var(--accent);font-size:20px}
-.card-result{background:var(--surface);border-radius:12px;padding:20px;border:1px solid var(--border)}
-.card-av{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--teal));display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:18px;color:#fff;margin-bottom:14px}
-.card-name{font-size:17px;font-weight:500;margin-bottom:2px}
-.card-role{font-size:12px;color:var(--muted);margin-bottom:14px}
-.card-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
-.card-tag{background:rgba(124,106,255,0.15);border:1px solid rgba(124,106,255,0.25);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--accent2)}
-.card-btns{display:flex;gap:8px}
-.card-btn{flex:1;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px;font-size:12px;font-family:var(--sans);cursor:pointer}
-.card-btn.gh{background:var(--bg3);color:var(--muted);border:1px solid var(--border)}
-
-/* STATS */
-.stats{display:flex;border:1px solid var(--border);border-radius:14px;max-width:640px;margin:0 auto 120px;overflow:hidden;animation:fadeUp 0.7s ease 0.5s both}
-.stat{flex:1;padding:24px;text-align:center;border-right:1px solid var(--border)}
-.stat:last-child{border-right:none}
-.stat-num{font-family:var(--serif);font-size:32px;letter-spacing:-0.02em}
-.stat-num span{color:var(--accent2)}
-.stat-lbl{font-size:12px;color:var(--muted);margin-top:4px}
-
-/* SECTIONS */
-section{position:relative;z-index:1}
-.section-tag{display:inline-block;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent2);margin-bottom:16px;font-weight:500}
-.section-title{font-family:var(--serif);font-size:clamp(32px,5vw,52px);line-height:1.12;letter-spacing:-0.02em;max-width:600px;margin:0 auto 16px;text-align:center}
-.section-sub{font-size:17px;color:var(--muted);max-width:480px;margin:0 auto;text-align:center;line-height:1.7;font-weight:300}
-.container{max-width:1100px;margin:0 auto;padding:0 32px}
-
-/* HOW */
-.how{padding:100px 0}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:64px;border:1px solid var(--border);border-radius:16px;overflow:hidden}
-.step{padding:40px 32px;background:var(--bg3);border-right:1px solid var(--border);position:relative}
-.step:last-child{border-right:none}
-.step-num{font-family:var(--serif);font-size:48px;color:var(--border2);letter-spacing:-0.03em;margin-bottom:20px;line-height:1}
-.step-icon{font-size:28px;margin-bottom:16px;display:block}
-.step h3{font-size:18px;font-weight:500;margin-bottom:10px}
-.step p{font-size:14px;color:var(--muted);line-height:1.65}
-.step-accent{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--teal))}
-
-/* FEATURES */
-.features{padding:100px 0;background:var(--bg2)}
-.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:64px;background:var(--border);border-radius:16px;overflow:hidden;border:1px solid var(--border)}
-.feat{background:var(--bg2);padding:36px 28px;transition:background .2s}
-.feat:hover{background:var(--bg3)}
-.feat-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:20px}
-.feat h4{font-size:16px;font-weight:500;margin-bottom:8px}
-.feat p{font-size:14px;color:var(--muted);line-height:1.65}
-
-/* PRICING */
-.pricing{padding:100px 0}
-.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:64px}
-.plan{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:36px 28px;position:relative;transition:transform .2s}
-.plan:hover{transform:translateY(-4px)}
-.plan.featured{border-color:var(--accent);background:linear-gradient(135deg,rgba(124,106,255,0.08),var(--bg3))}
-.plan-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;border-radius:100px;padding:4px 16px;font-size:12px;font-weight:500;white-space:nowrap}
-.plan-name{font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
-.plan-price{font-family:var(--serif);font-size:44px;letter-spacing:-0.03em;line-height:1;margin-bottom:4px}
-.plan-price span{font-size:18px;color:var(--muted);font-family:var(--sans)}
-.plan-period{font-size:13px;color:var(--muted);margin-bottom:28px}
-.plan-features{list-style:none;margin-bottom:32px}
-.plan-features li{font-size:14px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.plan-features li::before{content:'✓';color:var(--green);font-size:12px}
-.plan-features li:last-child{border-bottom:none}
-.plan-btn{width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:10px;padding:13px;font-size:15px;font-family:var(--sans);cursor:pointer;font-weight:500;transition:all .2s}
-.plan.featured .plan-btn{background:var(--accent);border-color:var(--accent);color:#fff}
-.plan-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
-
-/* EARLY ACCESS */
-.early{padding:120px 0;text-align:center;background:radial-gradient(ellipse at center,rgba(124,106,255,0.12) 0%,transparent 70%)}
-.counter-badge{display:none;align-items:center;gap:8px;background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.3);border-radius:100px;padding:6px 16px;font-size:13px;color:var(--green);margin:0 auto 24px;width:fit-content}
-.counter-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
-.early-form{display:flex;gap:12px;max-width:480px;margin:40px auto 0}
-.early-input{flex:1;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:14px 18px;font-size:15px;color:var(--text);font-family:var(--sans);outline:none;transition:border-color .2s}
-.early-input::placeholder{color:var(--muted)}
-.early-input:focus{border-color:var(--accent)}
-.btn-submit{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px 24px;font-size:16px;font-family:var(--sans);cursor:pointer;font-weight:500;transition:all .25s;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:130px;box-shadow:0 0 30px rgba(124,106,255,0.3)}
-.btn-submit:hover:not(:disabled){background:var(--accent2);transform:translateY(-2px)}
-.btn-submit:disabled{opacity:0.65;cursor:not-allowed;transform:none}
-@keyframes spin{to{transform:rotate(360deg)}}
-.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite}
-.form-msg{max-width:480px;margin:14px auto 0;padding:13px 18px;border-radius:10px;font-size:14px;display:none;line-height:1.5}
-.form-msg.success{display:block;background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.3);color:var(--green)}
-.form-msg.warn{display:block;background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.3);color:#fbbf24}
-.form-msg.err{display:block;background:rgba(248,113,113,0.12);border:1px solid rgba(248,113,113,0.3);color:var(--red)}
-.early-note{margin-top:14px;font-size:13px;color:var(--muted)}
-
-/* FOOTER */
-footer{padding:48px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
-.footer-left{display:flex;align-items:center;gap:16px}
-.footer-copy{font-size:13px;color:var(--muted)}
-.footer-links{display:flex;gap:24px}
-.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s}
-.footer-links a:hover{color:var(--text)}
-
-/* ANIM */
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
-.reveal.visible{opacity:1;transform:none}
-
-/* LANG */
-body.lang-en [data-ko]{display:none}
-body.lang-ko [data-en]{display:none}
-
-/* RESPONSIVE */
-@media(max-width:768px){
-  nav{padding:16px 20px}
-  .nav-links{display:none}
-  .hero h1{font-size:42px}
-  .preview-content{grid-template-columns:1fr}
-  .arrow-mid,.preview-right{display:none}
-  .steps,.feat-grid,.plan-grid{grid-template-columns:1fr}
-  .step{border-right:none;border-bottom:1px solid var(--border)}
-  .step:last-child{border-bottom:none}
-  .stats{flex-direction:column}
-  .stat{border-right:none;border-bottom:1px solid var(--border)}
-  .early-form{flex-direction:column}
-  footer{flex-direction:column;text-align:center}
+/* ── Reset & Base ────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--background);
+  color: var(--on-background);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  font-size: 16px;
+  line-height: 1.6;
 }
+
+/* ── Typography Scale ────────────────────────────────── */
+.display-lg { font-size: clamp(36px, 5vw, 52px); font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; }
+.headline-lg { font-size: clamp(24px, 3.5vw, 32px); font-weight: 700; line-height: 1.3; letter-spacing: -0.01em; }
+.headline-md { font-size: 22px; font-weight: 700; line-height: 1.4; }
+.body-lg { font-size: 17px; font-weight: 500; line-height: 1.65; }
+.body-md { font-size: 15px; font-weight: 400; line-height: 1.65; }
+.label-lg { font-size: 14px; font-weight: 600; line-height: 1.4; letter-spacing: 0.01em; }
+.label-sm { font-size: 12px; font-weight: 600; line-height: 1.2; letter-spacing: 0.02em; }
+
+/* ── Layout ──────────────────────────────────────────── */
+.container { max-width: 1140px; margin: 0 auto; padding: 0 40px; }
+@media (max-width: 768px) { .container { padding: 0 20px; } }
+
+/* ── NAV ─────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(248,249,255,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--outline-variant);
+  box-shadow: var(--shadow-ambient);
+}
+.nav-inner {
+  max-width: 1140px; margin: 0 auto; padding: 0 40px;
+  height: 64px; display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-size: 20px; font-weight: 800; color: var(--primary);
+  text-decoration: none; letter-spacing: -0.03em;
+}
+.nav-links { display: flex; align-items: center; gap: 32px; }
+.nav-links a {
+  font-size: 14px; font-weight: 600; color: var(--on-surface-variant);
+  text-decoration: none; transition: color .2s;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--primary); }
+.nav-actions { display: flex; align-items: center; gap: 10px; }
+.lang-toggle {
+  display: flex; background: var(--surface-container-low);
+  border: 1px solid var(--outline-variant); border-radius: var(--radius-full);
+  padding: 3px; gap: 2px;
+}
+.lang-btn {
+  background: none; border: none; cursor: pointer;
+  padding: 4px 10px; border-radius: var(--radius-full);
+  font-size: 12px; font-weight: 700; font-family: var(--font);
+  color: var(--on-surface-variant); transition: all .2s;
+}
+.lang-btn.active { background: var(--primary); color: #fff; }
+.btn-ghost-nav {
+  padding: 8px 16px; font-size: 13px; font-weight: 700; font-family: var(--font);
+  color: var(--on-surface-variant); background: none; border: none; cursor: pointer;
+  border-radius: var(--radius-md); transition: background .15s;
+}
+.btn-ghost-nav:hover { background: var(--surface-container-low); }
+.btn-primary-nav {
+  padding: 9px 20px; font-size: 13px; font-weight: 700; font-family: var(--font);
+  color: #fff; background: var(--primary-container); border: none; cursor: pointer;
+  border-radius: var(--radius-md); text-decoration: none;
+  box-shadow: 0 4px 14px rgba(0,100,255,0.3); transition: all .2s;
+}
+.btn-primary-nav:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,100,255,0.38); }
+
+/* ── HERO ─────────────────────────────────────────────── */
+.hero {
+  padding: 140px 0 80px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero-glow {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -60%);
+  width: 900px; height: 600px;
+  background: radial-gradient(ellipse, rgba(0,100,255,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--surface-container-low);
+  border: 1px solid rgba(0,78,203,0.15);
+  border-radius: var(--radius-full);
+  padding: 6px 14px; margin-bottom: 28px;
+  font-size: 13px; font-weight: 600; color: var(--primary);
+}
+.hero-badge .ms { font-size: 15px; font-family: 'Material Symbols Outlined'; font-variation-settings: 'FILL' 0, 'wght' 400; }
+.hero h1 { color: var(--on-surface); margin-bottom: 22px; }
+.hero h1 .accent { color: var(--primary); }
+.hero-sub { color: var(--on-surface-variant); max-width: 580px; margin: 0 auto 40px; }
+.hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn-primary-hero {
+  padding: 15px 32px; font-size: 15px; font-weight: 700; font-family: var(--font);
+  color: #fff; background: var(--primary); border: none; cursor: pointer;
+  border-radius: var(--radius-md); text-decoration: none;
+  box-shadow: 0 4px 20px rgba(0,78,203,0.35); transition: all .2s;
+}
+.btn-primary-hero:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,78,203,0.42); }
+.btn-outline-hero {
+  padding: 14px 32px; font-size: 15px; font-weight: 700; font-family: var(--font);
+  color: var(--on-surface); background: #fff;
+  border: 1px solid var(--surface-variant); cursor: pointer;
+  border-radius: var(--radius-md); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 6px; transition: all .2s;
+}
+.btn-outline-hero:hover { background: var(--surface-container-low); }
+.ms { font-family: 'Material Symbols Outlined'; font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; font-style: normal; line-height: 1; }
+
+/* ── STATS ROW ────────────────────────────────────────── */
+.stats-row {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  background: #fff; border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-xl); overflow: hidden;
+  box-shadow: var(--shadow-card);
+  max-width: 860px; margin: 56px auto 0;
+}
+.stat-cell {
+  padding: 28px 20px; text-align: center;
+  border-right: 1px solid var(--outline-variant);
+}
+.stat-cell:last-child { border-right: none; }
+.stat-num { font-size: 28px; font-weight: 800; color: var(--primary); letter-spacing: -0.02em; line-height: 1; }
+.stat-unit { font-size: 14px; font-weight: 700; color: var(--primary); }
+.stat-lbl { font-size: 12px; color: var(--on-surface-variant); margin-top: 5px; }
+
+/* ── SECTIONS ─────────────────────────────────────────── */
+section { padding: 80px 0; }
+.section-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--primary); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px;
+}
+.section-title { color: var(--on-surface); margin-bottom: 16px; }
+.section-desc { color: var(--on-surface-variant); max-width: 540px; }
+
+/* ── CARDS ────────────────────────────────────────────── */
+.card {
+  background: #fff; border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-xl); padding: 32px;
+  box-shadow: var(--shadow-card); transition: box-shadow .2s, transform .2s;
+}
+.card:hover { box-shadow: var(--shadow-float); transform: translateY(-2px); }
+.card-icon {
+  width: 48px; height: 48px; border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px; font-size: 22px;
+}
+.card-icon.blue  { background: var(--surface-container-low); color: var(--primary); }
+.card-icon.teal  { background: #E6FAF5; color: #0D7A5A; }
+.card-icon.amber { background: #FFF8ED; color: #B45309; }
+.card-icon.slate { background: var(--surface-container); color: var(--secondary); }
+
+/* ── BENTO GRID ───────────────────────────────────────── */
+.bento { display: grid; gap: 20px; }
+.bento-2 { grid-template-columns: 1fr 1fr; }
+.bento-8-4 { grid-template-columns: 8fr 4fr; }
+.bento-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+/* ── FEATURE CARD ─────────────────────────────────────── */
+.feat-card {
+  background: #fff; border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-xl); padding: 32px;
+  box-shadow: var(--shadow-card);
+}
+.feat-num {
+  font-size: 11px; font-weight: 800; color: var(--primary);
+  letter-spacing: 0.06em; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 6px;
+}
+.feat-num::before { content: ''; display: inline-block; width: 20px; height: 2px; background: var(--primary); border-radius: 1px; }
+
+/* ── DIGITAL CARD PREVIEW ─────────────────────────────── */
+.d-card {
+  border-radius: 20px; padding: 24px; margin: 4px 0;
+}
+.d-card-white {
+  background: #fff; border: 1px solid var(--outline-variant);
+  box-shadow: 0 4px 24px rgba(0,78,203,0.08);
+}
+.d-card-blue { background: var(--primary); color: #fff; }
+.d-card-soft { background: var(--surface-container-low); border: 1px solid var(--outline-variant); }
+.d-avatar {
+  width: 48px; height: 48px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700;
+}
+
+/* ── SECURITY SECTION ─────────────────────────────────── */
+.lock-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 0; border-bottom: 1px solid var(--surface-container-high);
+  font-size: 14px; color: var(--on-surface-variant);
+}
+.lock-row:last-child { border-bottom: none; }
+.lock-badge {
+  font-size: 11px; font-weight: 700; padding: 3px 8px;
+  border-radius: var(--radius-full); margin-left: auto;
+}
+.badge-blue  { background: var(--surface-container-low); color: var(--primary); }
+.badge-green { background: #ECFDF5; color: #065F46; }
+.badge-amber { background: #FFFBEB; color: #92400E; }
+
+/* ── PRICING ──────────────────────────────────────────── */
+.plan {
+  background: #fff; border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-xl); padding: 32px;
+  box-shadow: var(--shadow-card); position: relative;
+}
+.plan.featured { border: 2px solid var(--primary); box-shadow: 0 0 0 4px rgba(0,78,203,0.07), var(--shadow-card); }
+.plan-badge {
+  position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+  background: var(--primary); color: #fff; font-size: 12px; font-weight: 700;
+  padding: 4px 16px; border-radius: var(--radius-full); white-space: nowrap;
+}
+.plan-name { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--on-surface-variant); margin-bottom: 12px; }
+.plan-price { font-size: 40px; font-weight: 800; color: var(--on-surface); line-height: 1; margin-bottom: 4px; letter-spacing: -0.03em; }
+.plan-price small { font-size: 16px; font-weight: 600; color: var(--on-surface-variant); }
+.plan-period { font-size: 13px; color: var(--on-surface-variant); margin-bottom: 24px; }
+.plan-items { list-style: none; margin-bottom: 28px; }
+.plan-items li {
+  font-size: 14px; color: var(--on-surface-variant); padding: 9px 0;
+  border-bottom: 1px solid var(--surface-container-high);
+  display: flex; align-items: center; gap: 8px;
+}
+.plan-items li:last-child { border-bottom: none; }
+.plan-items li .ms { color: #10B981; font-size: 18px; }
+.btn-plan {
+  width: 100%; padding: 13px; font-size: 14px; font-weight: 700; font-family: var(--font);
+  border-radius: var(--radius-md); border: none; cursor: pointer; transition: all .2s;
+}
+.btn-plan-outline {
+  background: var(--surface-container-low); color: var(--primary);
+  border: 1.5px solid var(--primary);
+}
+.btn-plan-outline:hover { background: var(--primary); color: #fff; }
+.btn-plan-fill { background: var(--primary); color: #fff; }
+.btn-plan-fill:hover { background: var(--primary-container); }
+
+/* ── EARLY ACCESS ─────────────────────────────────────── */
+.early {
+  background: var(--primary); border-radius: var(--radius-xl);
+  padding: 64px; text-align: center; position: relative; overflow: hidden;
+  box-shadow: var(--shadow-float);
+}
+.early-deco {
+  position: absolute; border-radius: 50%; background: rgba(255,255,255,0.06);
+  pointer-events: none;
+}
+.early h2 { color: #fff; margin-bottom: 14px; }
+.early p { color: rgba(255,255,255,.8); max-width: 480px; margin: 0 auto 36px; }
+.early-form { display: flex; gap: 10px; max-width: 480px; margin: 0 auto; }
+.early-input {
+  flex: 1; background: rgba(255,255,255,.12);
+  border: 1.5px solid rgba(255,255,255,.25);
+  border-radius: var(--radius-md); padding: 14px 18px;
+  font-size: 15px; color: #fff; font-family: var(--font); outline: none;
+  transition: border-color .2s;
+}
+.early-input::placeholder { color: rgba(255,255,255,.5); }
+.early-input:focus { border-color: rgba(255,255,255,.7); background: rgba(255,255,255,.18); }
+.btn-early {
+  background: #fff; color: var(--primary); font-weight: 700; font-size: 15px;
+  font-family: var(--font); border: none; border-radius: var(--radius-md);
+  padding: 14px 24px; cursor: pointer; white-space: nowrap; transition: all .2s;
+  display: inline-flex; align-items: center; gap: 6px; min-width: 120px; justify-content: center;
+}
+.btn-early:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,.15); }
+.btn-early:disabled { opacity: .7; cursor: not-allowed; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { width: 16px; height: 16px; border: 2px solid rgba(0,78,203,.3); border-top-color: var(--primary); border-radius: 50%; animation: spin .7s linear infinite; }
+.form-msg {
+  max-width: 480px; margin: 12px auto 0;
+  padding: 12px 16px; border-radius: var(--radius-md);
+  font-size: 14px; display: none; font-weight: 500;
+}
+.form-msg.success { display:block; background:rgba(255,255,255,.15); color:#fff; border:1px solid rgba(255,255,255,.3); }
+.form-msg.warn    { display:block; background:rgba(255,255,255,.1); color:rgba(255,255,255,.9); border:1px solid rgba(255,255,255,.2); }
+.form-msg.err     { display:block; background:rgba(255,100,100,.15); color:#fff; border:1px solid rgba(255,150,150,.3); }
+.early-note { margin-top: 16px; font-size: 13px; color: rgba(255,255,255,.55); }
+
+/* ── FOOTER ───────────────────────────────────────────── */
+footer {
+  background: #fff; border-top: 1px solid var(--outline-variant);
+  padding: 48px 0;
+}
+.footer-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 20px;
+}
+.footer-logo { font-size: 18px; font-weight: 800; color: var(--primary); letter-spacing: -0.02em; }
+.footer-copy { font-size: 12px; color: var(--on-surface-variant); margin-top: 4px; }
+.footer-links { display: flex; gap: 28px; }
+.footer-links a { font-size: 13px; color: var(--on-surface-variant); text-decoration: none; transition: color .15s; }
+.footer-links a:hover { color: var(--primary); }
+
+/* ── CHIP / PILL ──────────────────────────────────────── */
+.chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 12px; border-radius: var(--radius-full);
+  font-size: 12px; font-weight: 600;
+}
+.chip-blue  { background: var(--surface-container-low); color: var(--primary); }
+.chip-green { background: #ECFDF5; color: #065F46; }
+.chip-amber { background: #FFFBEB; color: #92400E; }
+
+/* ── ANIM ─────────────────────────────────────────────── */
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:none; } }
+.fade-up { animation: fadeUp .65s ease both; }
+.delay-1 { animation-delay: .1s; }
+.delay-2 { animation-delay: .2s; }
+.delay-3 { animation-delay: .3s; }
+.reveal { opacity:0; transform:translateY(20px); transition:opacity .6s ease, transform .6s ease; }
+.reveal.in { opacity:1; transform:none; }
+
+/* ── RESPONSIVE ───────────────────────────────────────── */
+@media(max-width:900px) {
+  .bento-8-4, .bento-2, .bento-3 { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .nav-links { display: none; }
+  .early { padding: 40px 24px; }
+  .early-form { flex-direction: column; }
+  .footer-inner { flex-direction: column; text-align: center; }
+  .footer-links { flex-wrap: wrap; justify-content: center; }
+}
+@media(max-width:480px) {
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .stat-cell { padding: 20px 12px; }
+  .hero { padding: 120px 0 60px; }
+}
+
+/* ── LANG ─────────────────────────────────────────────── */
+body.lang-en [data-ko]{ display:none; }
+body.lang-ko [data-en]{ display:none; }
 </style>
 </head>
 <body class="lang-ko">
 
-<!-- ✅ Supabase 설정값 — 아래 두 줄만 본인 값으로 교체하세요 -->
+<!-- Supabase init -->
 <script>
 const SUPABASE_URL  = 'https://jzeaqhjtzsgebidsfqyo.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_APUBrTLZj3yyoelo4z2o_Q_ZbYgIUHQ';
@@ -194,80 +419,209 @@ const SUPABASE_ANON = 'sb_publishable_APUBrTLZj3yyoelo4z2o_Q_ZbYgIUHQ';
 
 <!-- NAV -->
 <nav>
-  <a href="/" class="logo"><span class="logo-dot"></span>Hulatform</a>
-  <div class="nav-links">
-    <a href="#how" data-ko>사용법</a><a href="#how" data-en>How it works</a>
-    <a href="#features" data-ko>기능</a><a href="#features" data-en>Features</a>
-    <a href="#pricing" data-ko>요금</a><a href="#pricing" data-en>Pricing</a>
-    <div class="lang-toggle">
-      <button class="lang-btn active" onclick="setLang('ko')">KO</button>
-      <button class="lang-btn" onclick="setLang('en')">EN</button>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">Hulatform</a>
+    <div class="nav-links">
+      <a href="#features" class="active" data-ko>기능</a>
+      <a href="#features" data-en>Features</a>
+      <a href="#security" data-ko>보안</a>
+      <a href="#security" data-en>Security</a>
+      <a href="#pricing" data-ko>요금</a>
+      <a href="#pricing" data-en>Pricing</a>
+      <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('ko')">KO</button>
+        <button class="lang-btn" onclick="setLang('en')">EN</button>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <div class="lang-toggle" style="display:none" id="mobile-lang">
+        <button class="lang-btn active" onclick="setLang('ko')">KO</button>
+        <button class="lang-btn" onclick="setLang('en')">EN</button>
+      </div>
+      <a href="#early" class="btn-primary-nav">
+        <span data-ko>베타 신청</span>
+        <span data-en>Early access</span>
+      </a>
     </div>
   </div>
-  <a href="#early" class="nav-cta">
-    <span data-ko>베타 신청 →</span><span data-en>Early access →</span>
-  </a>
 </nav>
 
 <!-- HERO -->
-<section class="hero">
+<header class="hero">
   <div class="hero-glow"></div>
-  <div class="badge"><span class="badge-dot"></span>
-    <span data-ko>베타 모집 중 · 글로벌 Day-1</span>
-    <span data-en>Beta open · Global from day one</span>
-  </div>
-  <h1>
-    <span data-ko>명함 하나가<br><em>비즈니스 아이덴티티</em>가 된다</span>
-    <span data-en>One card becomes your<br><em>business identity</em></span>
-  </h1>
-  <p class="hero-sub">
-    <span data-ko>종이 명함을 찍으면 3초. AI가 프로필·포트폴리오·홍보카드를 동시에 생성합니다.</span>
-    <span data-en>Scan any card in 3 seconds. AI creates profile, portfolio, and promo card instantly.</span>
-  </p>
-  <div class="hero-actions">
-    <a href="#early" class="btn-primary"><span data-ko>무료로 시작하기 →</span><span data-en>Get started free →</span></a>
-    <a href="#how" class="btn-ghost"><span data-ko>사용법 보기</span><span data-en>See how it works</span></a>
-  </div>
-  <div class="hero-preview">
-    <div class="preview-window">
-      <div class="preview-bar">
-        <div class="dot" style="background:#ff5f56"></div>
-        <div class="dot" style="background:#ffbd2e"></div>
-        <div class="dot" style="background:#27c93f"></div>
-        <div class="preview-url">hulatform.com/p/your-name</div>
+  <div class="container">
+    <div class="hero-badge fade-up">
+      <span class="ms">auto_awesome</span>
+      <span data-ko>AI 네이티브 비즈니스 플랫폼 · 글로벌 Day-1</span>
+      <span data-en>AI-Native Business Platform · Global Day-1</span>
+    </div>
+
+    <h1 class="display-lg fade-up delay-1">
+      <span data-ko>명함 하나가<br><span class="accent">비즈니스 아이덴티티</span>가 됩니다</span>
+      <span data-en>One card becomes your<br><span class="accent">Business Identity</span></span>
+    </h1>
+
+    <p class="body-lg hero-sub fade-up delay-2">
+      <span data-ko>종이 명함을 촬영하면 3초. AI가 프로필·포트폴리오·홍보카드를 한·영·일 3개 언어로 동시에 생성합니다. LinkedIn보다 10배 빠릅니다.</span>
+      <span data-en>Photograph any business card in 3 seconds. AI generates your profile, portfolio, and promo card in Korean, English, and Japanese simultaneously.</span>
+    </p>
+
+    <div class="hero-actions fade-up delay-3">
+      <a href="#early" class="btn-primary-hero">
+        <span data-ko>무료로 시작하기</span>
+        <span data-en>Start for free</span>
+      </a>
+      <a href="#features" class="btn-outline-hero">
+        <span data-ko>기능 보기</span>
+        <span data-en>See features</span>
+        <span class="ms" style="font-size:18px">arrow_forward</span>
+      </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row reveal">
+      <div class="stat-cell">
+        <div class="stat-num">3<span class="stat-unit" data-ko>초</span><span class="stat-unit" data-en>sec</span></div>
+        <div class="stat-lbl" data-ko>명함 → AI 프로필</div>
+        <div class="stat-lbl" data-en>Card to AI profile</div>
       </div>
-      <div class="preview-content">
-        <div class="preview-left">
-          <div class="scan-area">
-            <div class="scan-icon">📇</div>
-            <div class="scan-lbl">
-              <strong data-ko>명함 스캔</strong><strong data-en>Scan card</strong>
-              <span data-ko>사진 촬영 또는 이미지 업로드</span>
-              <span data-en>Photo or image upload</span>
+      <div class="stat-cell">
+        <div class="stat-num">4<span class="stat-unit" data-ko>종</span><span class="stat-unit" data-en>types</span></div>
+        <div class="stat-lbl" data-ko>자동 생성 템플릿</div>
+        <div class="stat-lbl" data-en>Auto-generated formats</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">3<span class="stat-unit" data-ko>개국어</span><span class="stat-unit" data-en>langs</span></div>
+        <div class="stat-lbl" data-ko>한·영·일 동시</div>
+        <div class="stat-lbl" data-en>KO · EN · JA</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">100<span class="stat-unit">%</span></div>
+        <div class="stat-lbl" data-ko>보안 · GDPR</div>
+        <div class="stat-lbl" data-en>Secure · GDPR</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- FEATURES BENTO -->
+<section id="features" style="padding:80px 0">
+  <div class="container">
+    <div style="margin-bottom:52px" class="reveal">
+      <div class="section-eyebrow"><span class="ms" style="font-size:14px">grid_view</span><span data-ko>핵심 기능</span><span data-en>Core Features</span></div>
+      <h2 class="headline-lg section-title">
+        <span data-ko>단순한 명함 앱이 아닙니다</span>
+        <span data-en>More than a digital card</span>
+      </h2>
+      <p class="body-lg section-desc">
+        <span data-ko>비즈니스 신원 인프라입니다. 4가지 핵심 기능으로 당신의 명함이 살아있는 자산이 됩니다.</span>
+        <span data-en>It's business identity infrastructure. Four core features turn your card into a living asset.</span>
+      </p>
+    </div>
+
+    <!-- Row 1: 8+4 -->
+    <div class="bento bento-8-4 reveal" style="margin-bottom:20px">
+      <div class="feat-card" style="position:relative;overflow:hidden">
+        <div class="feat-num" data-ko>기능 01</div>
+        <div class="feat-num" data-en>Feature 01</div>
+        <h3 class="headline-md" style="margin-bottom:12px;color:var(--on-surface)" data-ko>AI 명함 자동 전환</h3>
+        <h3 class="headline-md" style="margin-bottom:12px;color:var(--on-surface)" data-en>AI Card Conversion</h3>
+        <p class="body-md" style="color:var(--on-surface-variant);margin-bottom:24px;max-width:460px" data-ko>종이 명함을 촬영하면 OCR이 정보를 추출하고, AI가 비즈니스형·프로필형·포트폴리오형·이력서형 4가지를 한·영·일 3개 언어로 동시 생성합니다.</p>
+        <p class="body-md" style="color:var(--on-surface-variant);margin-bottom:24px;max-width:460px" data-en>Photograph any card — OCR extracts the data, AI generates four formats (business, profile, portfolio, résumé) in KO, EN, and JA simultaneously.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span class="chip chip-blue" data-ko>3초 생성</span><span class="chip chip-blue" data-en>3-sec generation</span>
+          <span class="chip chip-green" data-ko>한·영·일</span><span class="chip chip-green" data-en>KO·EN·JA</span>
+          <span class="chip chip-amber" data-ko>4가지 포맷</span><span class="chip chip-amber" data-en>4 formats</span>
+        </div>
+        <!-- Preview cards -->
+        <div style="margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="d-card d-card-white">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+              <div class="d-avatar" style="background:var(--surface-container-low);color:var(--primary)">KJ</div>
+              <div>
+                <div style="font-size:14px;font-weight:700;color:var(--on-surface)">김준수</div>
+                <div style="font-size:11px;color:var(--on-surface-variant)">부동산 컨설턴트</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:5px">
+              <span class="chip chip-blue" style="font-size:10px">Verified ✓</span>
+              <span class="chip chip-green" style="font-size:10px">KO·EN</span>
             </div>
           </div>
-          <div style="margin-top:14px;font-size:12px;color:var(--muted);text-align:center">
-            <span data-ko>AI OCR · 자동 추출 · 다국어</span>
-            <span data-en>AI OCR · Auto extract · Multilingual</span>
+          <div class="d-card d-card-blue">
+            <div class="d-avatar" style="background:rgba(255,255,255,.2);color:#fff;margin-bottom:10px">KJ</div>
+            <div style="font-size:13px;font-weight:700">Kim Junsu</div>
+            <div style="font-size:11px;opacity:.7">Real Estate Consultant</div>
+            <div style="font-size:11px;opacity:.5;margin-top:8px">hulatform.com/p/junsu</div>
           </div>
         </div>
-        <div class="arrow-mid">→</div>
-        <div class="preview-right">
-          <div class="card-result">
-            <div class="card-av">KJ</div>
-            <div class="card-name">Kim Junsu</div>
-            <div class="card-role" data-ko>부동산 컨설턴트 · Verified ✓</div>
-            <div class="card-role" data-en>Investment Consultant · Verified ✓</div>
-            <div class="card-tags">
-              <span class="card-tag">AI Profile</span>
-              <span class="card-tag">Portfolio</span>
-              <span class="card-tag">EN/KO/JA</span>
-            </div>
-            <div class="card-btns">
-              <button class="card-btn" data-ko>연락하기</button>
-              <button class="card-btn" data-en>Connect</button>
-              <button class="card-btn gh">QR</button>
-            </div>
+      </div>
+      <div class="feat-card" style="background:var(--primary);color:#fff">
+        <span class="ms" style="font-size:36px;margin-bottom:16px;display:block;opacity:.9">document_scanner</span>
+        <h3 class="headline-md" style="color:#fff;margin-bottom:10px" data-ko>본인 명함 생성</h3>
+        <h3 class="headline-md" style="color:#fff;margin-bottom:10px" data-en>Create your card</h3>
+        <p style="opacity:.8;font-size:14px;line-height:1.65" data-ko>이미지·직접입력·아바타 중 선택. LinkedIn보다 10배 빠른 편집.</p>
+        <p style="opacity:.8;font-size:14px;line-height:1.65" data-en>Image, manual input, or avatar. 10× faster than LinkedIn editing.</p>
+        <div style="margin-top:auto;padding-top:32px;font-size:32px;font-weight:800;letter-spacing:-0.03em">10×</div>
+        <div style="font-size:13px;opacity:.7" data-ko>LinkedIn 대비 빠른 편집</div>
+        <div style="font-size:13px;opacity:.7" data-en>faster profile editing</div>
+      </div>
+    </div>
+
+    <!-- Row 2: 4+8 -->
+    <div class="bento bento-2 reveal">
+      <div class="feat-card">
+        <div class="feat-num" data-ko>기능 03</div>
+        <div class="feat-num" data-en>Feature 03</div>
+        <h3 class="headline-md" style="margin-bottom:12px;color:var(--on-surface)" data-ko>타인 명함 보관</h3>
+        <h3 class="headline-md" style="margin-bottom:12px;color:var(--on-surface)" data-en>Contact Vault</h3>
+        <p class="body-md" style="color:var(--on-surface-variant);margin-bottom:20px" data-ko>받은 종이·디지털 명함을 암호화 저장. 상대 정보 업데이트 시 자동 동기화. 내보내기는 2차 인증 필수.</p>
+        <p class="body-md" style="color:var(--on-surface-variant);margin-bottom:20px" data-en>Encrypted storage for paper and digital cards. Auto-sync when contacts update. Export requires 2FA.</p>
+        <div style="background:var(--surface-container-low);border-radius:var(--radius-md);padding:16px">
+          <div class="lock-row" style="font-size:13px">
+            <span class="ms" style="font-size:18px;color:var(--primary)">lock</span>
+            <span data-ko>암호화 저장</span><span data-en>Encrypted storage</span>
+            <span class="lock-badge badge-blue" data-ko>AES-256</span><span class="lock-badge badge-blue" data-en>AES-256</span>
+          </div>
+          <div class="lock-row" style="font-size:13px">
+            <span class="ms" style="font-size:18px;color:#10B981">sync</span>
+            <span data-ko>자동 동기화</span><span data-en>Auto-sync</span>
+            <span class="lock-badge badge-green" data-ko>실시간</span><span class="lock-badge badge-green" data-en>Real-time</span>
+          </div>
+          <div class="lock-row" style="font-size:13px">
+            <span class="ms" style="font-size:18px;color:#B45309">security</span>
+            <span data-ko>내보내기 보호</span><span data-en>Export protection</span>
+            <span class="lock-badge badge-amber" data-ko>2차 인증</span><span class="lock-badge badge-amber" data-en>2FA</span>
+          </div>
+        </div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-num" data-ko>기능 04</div>
+        <div class="feat-num" data-en>Feature 04</div>
+        <h3 class="headline-md" style="margin-bottom:12px;color:var(--on-surface)" data-ko>디지털 명함 교환</h3>
+        <h3 class="headline-md" style="margin-bottom:12px;color:var(--on-surface)" data-en>Digital Card Exchange</h3>
+        <p class="body-md" style="color:var(--on-surface-variant);margin-bottom:20px" data-ko>QR·링크·NFC·주변 탐색으로 교환. 비회원도 링크로 열람 가능. 실시간 조회 분석 대시보드.</p>
+        <p class="body-md" style="color:var(--on-surface-variant);margin-bottom:20px" data-en>Exchange via QR, link, NFC, or nearby scan. Non-members can view via link. Real-time analytics dashboard.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="background:var(--surface-container-low);border-radius:var(--radius-md);padding:14px;text-align:center">
+            <div style="font-size:22px;margin-bottom:4px">📱</div>
+            <div style="font-size:12px;font-weight:700;color:var(--primary)" data-ko>QR 코드</div>
+            <div style="font-size:12px;font-weight:700;color:var(--primary)" data-en>QR code</div>
+          </div>
+          <div style="background:var(--surface-container-low);border-radius:var(--radius-md);padding:14px;text-align:center">
+            <div style="font-size:22px;margin-bottom:4px">🔗</div>
+            <div style="font-size:12px;font-weight:700;color:var(--primary)" data-ko>링크 공유</div>
+            <div style="font-size:12px;font-weight:700;color:var(--primary)" data-en>Link share</div>
+          </div>
+          <div style="background:var(--surface-container-low);border-radius:var(--radius-md);padding:14px;text-align:center">
+            <div style="font-size:22px;margin-bottom:4px">📡</div>
+            <div style="font-size:12px;font-weight:700;color:var(--primary)" data-ko>주변 탐색</div>
+            <div style="font-size:12px;font-weight:700;color:var(--primary)" data-en>Nearby scan</div>
+          </div>
+          <div style="background:var(--surface-container-low);border-radius:var(--radius-md);padding:14px;text-align:center">
+            <div style="font-size:22px;margin-bottom:4px">📊</div>
+            <div style="font-size:12px;font-weight:700;color:var(--primary)" data-ko>실시간 분석</div>
+            <div style="font-size:12px;font-weight:700;color:var(--primary)" data-en>Analytics</div>
           </div>
         </div>
       </div>
@@ -275,278 +629,267 @@ const SUPABASE_ANON = 'sb_publishable_APUBrTLZj3yyoelo4z2o_Q_ZbYgIUHQ';
   </div>
 </section>
 
-<!-- STATS -->
-<div class="container">
-  <div class="stats reveal">
-    <div class="stat"><div class="stat-num">3<span>초</span></div><div class="stat-lbl" data-ko>명함→AI 프로필</div><div class="stat-lbl" data-en>Card to AI profile</div></div>
-    <div class="stat"><div class="stat-num">4<span>종</span></div><div class="stat-lbl" data-ko>자동 생성 템플릿</div><div class="stat-lbl" data-en>Auto formats</div></div>
-    <div class="stat"><div class="stat-num">3<span>개국어</span></div><div class="stat-lbl" data-ko>한·영·일 동시</div><div class="stat-lbl" data-en>KO · EN · JA</div></div>
-    <div class="stat"><div class="stat-num">100<span>%</span></div><div class="stat-lbl" data-ko>보안·GDPR</div><div class="stat-lbl" data-en>Secure · GDPR</div></div>
-  </div>
-</div>
-
-<!-- HOW IT WORKS -->
-<section class="how" id="how">
+<!-- SECURITY SECTION -->
+<section id="security" style="padding:80px 0;background:var(--surface-container-lowest)">
   <div class="container">
-    <div class="section-tag" data-ko>사용 방법</div><div class="section-tag" data-en>How it works</div>
-    <h2 class="section-title reveal"><span data-ko>3단계로 끝납니다</span><span data-en>Three steps. That's it.</span></h2>
-    <p class="section-sub reveal"><span data-ko>복잡한 입력 없이. AI가 나머지를 처리합니다.</span><span data-en>No tedious forms. AI handles the rest.</span></p>
-    <div class="steps reveal">
-      <div class="step">
-        <div class="step-accent"></div>
-        <div class="step-num">01</div><div class="step-icon">📸</div>
-        <h3 data-ko>명함 촬영·업로드</h3><h3 data-en>Scan or upload</h3>
-        <p data-ko>종이 명함을 찍거나 이미지를 업로드하세요. AI OCR이 이름·직책·연락처를 자동 추출합니다.</p>
-        <p data-en>Photograph any paper card or upload an image. AI OCR auto-extracts all info.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center" class="reveal">
+      <div>
+        <div class="section-eyebrow"><span class="ms" style="font-size:14px">verified_user</span><span data-ko>보안 설계</span><span data-en>Security Design</span></div>
+        <h2 class="headline-lg section-title" data-ko>신뢰는 설계에서 시작됩니다</h2>
+        <h2 class="headline-lg section-title" data-en>Trust is built into the design</h2>
+        <p class="body-lg section-desc" style="margin-bottom:32px" data-ko>열람·출력·내보내기를 사용자가 완전히 제어합니다. 모든 접근이 기록되며, 이상 행동은 자동으로 차단됩니다.</p>
+        <p class="body-lg section-desc" style="margin-bottom:32px" data-en>Full control over who views, prints, or exports. Every access is logged, and anomalous behavior is auto-blocked.</p>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span class="ms" style="color:var(--primary);font-size:22px">check_circle</span>
+            <span class="label-lg" data-ko>일반 열람 — 로그인만으로 가능</span>
+            <span class="label-lg" data-en>Normal viewing — login only</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <span class="ms" style="color:var(--primary);font-size:22px">check_circle</span>
+            <span class="label-lg" data-ko>내보내기·대량 다운로드 — OTP 2차 인증</span>
+            <span class="label-lg" data-en>Export & bulk download — OTP 2FA required</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <span class="ms" style="color:var(--primary);font-size:22px">check_circle</span>
+            <span class="label-lg" data-ko>ISMS-P 수준 보안 설계</span>
+            <span class="label-lg" data-en>ISMS-P level security architecture</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <span class="ms" style="color:var(--primary);font-size:22px">check_circle</span>
+            <span class="label-lg" data-ko>GDPR 준수 · 개인정보 완전 제어</span>
+            <span class="label-lg" data-en>GDPR compliant · full privacy control</span>
+          </div>
+        </div>
       </div>
-      <div class="step">
-        <div class="step-accent" style="background:linear-gradient(90deg,var(--teal),var(--accent))"></div>
-        <div class="step-num">02</div><div class="step-icon">✨</div>
-        <h3 data-ko>AI 프로필 자동 생성</h3><h3 data-en>AI creates your profile</h3>
-        <p data-ko>비즈니스·프로필·포트폴리오·이력서 4종을 한·영·일 3개 언어로 동시에 생성합니다.</p>
-        <p data-en>Generates 4 formats in KO, EN, and JA simultaneously.</p>
+      <div style="background:var(--surface-container-low);border:1px solid var(--outline-variant);border-radius:var(--radius-xl);padding:32px">
+        <h4 class="label-lg" style="color:var(--on-surface-variant);margin-bottom:18px;letter-spacing:.06em;text-transform:uppercase" data-ko>보안 정책 레이어</h4>
+        <h4 class="label-lg" style="color:var(--on-surface-variant);margin-bottom:18px;letter-spacing:.06em;text-transform:uppercase" data-en>Security policy layers</h4>
+        <div class="lock-row">
+          <span class="ms" style="color:var(--primary)">visibility</span>
+          <div><div style="font-size:13px;font-weight:600" data-ko>명함 열람</div><div style="font-size:13px;font-weight:600" data-en>Card viewing</div></div>
+          <span class="lock-badge badge-green" data-ko>기본 로그인</span><span class="lock-badge badge-green" data-en>Basic login</span>
+        </div>
+        <div class="lock-row">
+          <span class="ms" style="color:var(--primary)">download</span>
+          <div><div style="font-size:13px;font-weight:600" data-ko>명함 내보내기</div><div style="font-size:13px;font-weight:600" data-en>Card export</div></div>
+          <span class="lock-badge badge-amber" data-ko>OTP 인증</span><span class="lock-badge badge-amber" data-en>OTP required</span>
+        </div>
+        <div class="lock-row">
+          <span class="ms" style="color:var(--primary)">admin_panel_settings</span>
+          <div><div style="font-size:13px;font-weight:600" data-ko>팀 관리</div><div style="font-size:13px;font-weight:600" data-en>Team admin</div></div>
+          <span class="lock-badge badge-blue" data-ko>관리자 권한</span><span class="lock-badge badge-blue" data-en>Admin role</span>
+        </div>
+        <div class="lock-row">
+          <span class="ms" style="color:var(--primary)">policy</span>
+          <div><div style="font-size:13px;font-weight:600" data-ko>접근 기록</div><div style="font-size:13px;font-weight:600" data-en>Access logs</div></div>
+          <span class="lock-badge badge-green" data-ko>전체 자동 기록</span><span class="lock-badge badge-green" data-en>Full auto-log</span>
+        </div>
+        <div class="lock-row" style="border-bottom:none">
+          <span class="ms" style="color:var(--primary)">gpp_bad</span>
+          <div><div style="font-size:13px;font-weight:600" data-ko>이상 행동 탐지</div><div style="font-size:13px;font-weight:600" data-en>Anomaly detection</div></div>
+          <span class="lock-badge badge-amber" data-ko>자동 차단</span><span class="lock-badge badge-amber" data-en>Auto-block</span>
+        </div>
       </div>
-      <div class="step">
-        <div class="step-accent" style="background:linear-gradient(90deg,var(--gold),var(--teal))"></div>
-        <div class="step-num">03</div><div class="step-icon">🔗</div>
-        <h3 data-ko>공유·연결·성장</h3><h3 data-en>Share, connect, grow</h3>
-        <p data-ko>QR·링크·이미지로 즉시 공유. 누가 봤는지 확인하고 팀 명함을 한 번에 관리합니다.</p>
-        <p data-en>Share via QR, link, or image. Track views and manage team cards at once.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FEATURES -->
-<section class="features" id="features">
-  <div class="container">
-    <div class="section-tag" data-ko>핵심 기능</div><div class="section-tag" data-en>Features</div>
-    <h2 class="section-title reveal"><span data-ko>단순한 명함 앱이 아닙니다</span><span data-en>More than a digital card</span></h2>
-    <div class="feat-grid reveal">
-      <div class="feat"><div class="feat-icon" style="background:rgba(124,106,255,0.15)">🤖</div><h4 data-ko>AI 프로필 자동 생성</h4><h4 data-en>AI Profile Generation</h4><p data-ko>명함 스캔 또는 직접 입력으로 링크드인형·홍보형·포트폴리오형을 자동 생성합니다.</p><p data-en>Auto-generate profiles from a scan — no tedious forms ever.</p></div>
-      <div class="feat"><div class="feat-icon" style="background:rgba(45,212,191,0.15)">🌏</div><h4 data-ko>한·영·일 3개국어</h4><h4 data-en>Trilingual from day one</h4><p data-ko>한국어·영어·일본어 프로필을 동시에 생성합니다. 글로벌 영업에 바로 활용하세요.</p><p data-en>Korean, English, and Japanese profiles generated simultaneously.</p></div>
-      <div class="feat"><div class="feat-icon" style="background:rgba(244,197,90,0.15)">🔒</div><h4 data-ko>보안 중심 설계</h4><h4 data-en>Security-first</h4><p data-ko>열람·내보내기를 완전히 제어합니다. 접근 기록으로 누가 봤는지 확인 가능합니다.</p><p data-en>Full control over views and exports. Access logs show every action.</p></div>
-      <div class="feat"><div class="feat-icon" style="background:rgba(52,211,153,0.15)">📊</div><h4 data-ko>실시간 분석</h4><h4 data-en>Real-time analytics</h4><p data-ko>조회수·클릭률·공유 경로를 실시간 대시보드에서 확인합니다.</p><p data-en>Track views, clicks, and share paths in real-time.</p></div>
-      <div class="feat"><div class="feat-icon" style="background:rgba(124,106,255,0.15)">🏢</div><h4 data-ko>팀·기업 관리</h4><h4 data-en>Team & Enterprise</h4><p data-ko>전사 명함을 한 번에 발급·수정·회수합니다. 도메인 인증 배지로 신뢰도를 높입니다.</p><p data-en>Issue, update, revoke team cards centrally with domain-verified badges.</p></div>
-      <div class="feat"><div class="feat-icon" style="background:rgba(248,113,113,0.15)">🔌</div><h4 data-ko>CRM 연동</h4><h4 data-en>CRM Integration</h4><p data-ko>HubSpot·Salesforce·Notion과 연동. 명함 스캔이 바로 CRM 리드로 등록됩니다.</p><p data-en>Connect with HubSpot, Salesforce, Notion. Scanned cards become CRM leads.</p></div>
     </div>
   </div>
 </section>
 
 <!-- PRICING -->
-<section class="pricing" id="pricing">
+<section id="pricing" style="padding:80px 0">
   <div class="container">
-    <div class="section-tag" data-ko>요금제</div><div class="section-tag" data-en>Pricing</div>
-    <h2 class="section-title reveal"><span data-ko>시작은 무료입니다</span><span data-en>Start for free</span></h2>
-    <div class="plan-grid reveal">
+    <div style="text-align:center;margin-bottom:52px" class="reveal">
+      <div class="section-eyebrow" style="justify-content:center"><span class="ms" style="font-size:14px">payments</span><span data-ko>요금제</span><span data-en>Pricing</span></div>
+      <h2 class="headline-lg section-title" data-ko>시작은 무료입니다</h2>
+      <h2 class="headline-lg section-title" data-en>Start for free</h2>
+      <p class="body-lg" style="color:var(--on-surface-variant)" data-ko>성장에 맞춰 업그레이드. 언제든 취소 가능.</p>
+      <p class="body-lg" style="color:var(--on-surface-variant)" data-en>Upgrade as you grow. Cancel anytime.</p>
+    </div>
+    <div class="bento bento-3 reveal">
       <div class="plan">
         <div class="plan-name">Free</div>
-        <div class="plan-price">$0<span data-ko>/월</span><span data-en>/mo</span></div>
-        <div class="plan-period" data-ko>영원히 무료</div><div class="plan-period" data-en>Forever free</div>
-        <ul class="plan-features">
-          <li data-ko>명함 스캔 월 5회</li><li data-en>5 card scans/month</li>
-          <li data-ko>디지털 명함 1개</li><li data-en>1 digital card</li>
-          <li data-ko>기본 템플릿 2종</li><li data-en>2 basic templates</li>
-          <li data-ko>QR·링크 공유</li><li data-en>QR & link sharing</li>
+        <div class="plan-price">$0<small data-ko>/월</small><small data-en>/mo</small></div>
+        <div class="plan-period" data-ko>영원히 무료</div>
+        <div class="plan-period" data-en>Forever free</div>
+        <ul class="plan-items">
+          <li><span class="ms">check</span><span data-ko>명함 스캔 월 5회</span><span data-en>5 scans/month</span></li>
+          <li><span class="ms">check</span><span data-ko>디지털 명함 1개</span><span data-en>1 digital card</span></li>
+          <li><span class="ms">check</span><span data-ko>기본 템플릿 2종</span><span data-en>2 basic templates</span></li>
+          <li><span class="ms">check</span><span data-ko>QR·링크 공유</span><span data-en>QR & link sharing</span></li>
         </ul>
-        <button class="plan-btn" onclick="scrollToEarly()"><span data-ko>무료 시작</span><span data-en>Get started</span></button>
+        <button class="btn-plan btn-plan-outline" onclick="document.getElementById('early').scrollIntoView({behavior:'smooth'})" data-ko>무료 시작</button>
+        <button class="btn-plan btn-plan-outline" onclick="document.getElementById('early').scrollIntoView({behavior:'smooth'})" data-en>Get started</button>
       </div>
+
       <div class="plan featured">
-        <div class="plan-badge" data-ko>가장 인기</div><div class="plan-badge" data-en>Most popular</div>
+        <div class="plan-badge" data-ko>가장 인기</div>
+        <div class="plan-badge" data-en>Most popular</div>
         <div class="plan-name">Pro</div>
-        <div class="plan-price">$9<span data-ko>/월</span><span data-en>/mo</span></div>
-        <div class="plan-period" data-ko>연간 결제 시 $7/월</div><div class="plan-period" data-en>$7/mo billed annually</div>
-        <ul class="plan-features">
-          <li data-ko>명함 스캔 무제한</li><li data-en>Unlimited scans</li>
-          <li data-ko>디지털 명함 10개</li><li data-en>10 digital cards</li>
-          <li data-ko>전체 템플릿 + 3개 언어</li><li data-en>All templates + 3 languages</li>
-          <li data-ko>조회 분석 대시보드</li><li data-en>Analytics dashboard</li>
-          <li data-ko>우선 지원</li><li data-en>Priority support</li>
+        <div class="plan-price">$9<small data-ko>/월</small><small data-en>/mo</small></div>
+        <div class="plan-period" data-ko>연간 결제 시 $7/월</div>
+        <div class="plan-period" data-en>$7/mo billed annually</div>
+        <ul class="plan-items">
+          <li><span class="ms">check</span><span data-ko>무제한 명함 스캔</span><span data-en>Unlimited scans</span></li>
+          <li><span class="ms">check</span><span data-ko>디지털 명함 10개</span><span data-en>10 digital cards</span></li>
+          <li><span class="ms">check</span><span data-ko>전체 템플릿 + 3개 언어</span><span data-en>All templates + 3 langs</span></li>
+          <li><span class="ms">check</span><span data-ko>조회 분석 대시보드</span><span data-en>Analytics dashboard</span></li>
+          <li><span class="ms">check</span><span data-ko>우선 고객 지원</span><span data-en>Priority support</span></li>
         </ul>
-        <button class="plan-btn" onclick="scrollToEarly()"><span data-ko>Pro 신청</span><span data-en>Start Pro</span></button>
+        <button class="btn-plan btn-plan-fill" onclick="document.getElementById('early').scrollIntoView({behavior:'smooth'})" data-ko>Pro 시작하기</button>
+        <button class="btn-plan btn-plan-fill" onclick="document.getElementById('early').scrollIntoView({behavior:'smooth'})" data-en>Start Pro</button>
       </div>
+
       <div class="plan">
         <div class="plan-name">Team</div>
-        <div class="plan-price">$29<span data-ko>/월</span><span data-en>/mo</span></div>
-        <div class="plan-period" data-ko>최대 5인 팀</div><div class="plan-period" data-en>Up to 5 members</div>
-        <ul class="plan-features">
-          <li data-ko>Pro 기능 전체</li><li data-en>Everything in Pro</li>
-          <li data-ko>팀 관리자 콘솔</li><li data-en>Team admin console</li>
-          <li data-ko>도메인 인증 배지</li><li data-en>Domain verified badge</li>
-          <li data-ko>CRM 웹훅 연동</li><li data-en>CRM webhook</li>
-          <li data-ko>API 접근</li><li data-en>API access</li>
+        <div class="plan-price">$29<small data-ko>/월</small><small data-en>/mo</small></div>
+        <div class="plan-period" data-ko>최대 5인 팀</div>
+        <div class="plan-period" data-en>Up to 5 members</div>
+        <ul class="plan-items">
+          <li><span class="ms">check</span><span data-ko>Pro 기능 전체</span><span data-en>Everything in Pro</span></li>
+          <li><span class="ms">check</span><span data-ko>팀 관리자 콘솔</span><span data-en>Team admin console</span></li>
+          <li><span class="ms">check</span><span data-ko>도메인 인증 배지</span><span data-en>Domain verified badge</span></li>
+          <li><span class="ms">check</span><span data-ko>CRM 웹훅 연동</span><span data-en>CRM webhook</span></li>
+          <li><span class="ms">check</span>API access</li>
         </ul>
-        <button class="plan-btn" onclick="scrollToEarly()"><span data-ko>팀 신청</span><span data-en>Start Team</span></button>
+        <button class="btn-plan btn-plan-outline" onclick="document.getElementById('early').scrollIntoView({behavior:'smooth'})" data-ko>팀 시작하기</button>
+        <button class="btn-plan btn-plan-outline" onclick="document.getElementById('early').scrollIntoView({behavior:'smooth'})" data-en>Start Team</button>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ======================== EARLY ACCESS ======================== -->
-<section class="early" id="early">
+<!-- EARLY ACCESS CTA -->
+<section id="early" style="padding:80px 0">
   <div class="container">
-    <div class="section-tag" data-ko>베타 신청</div><div class="section-tag" data-en>Early access</div>
+    <div class="early reveal">
+      <div class="early-deco" style="width:400px;height:400px;bottom:-150px;right:-100px"></div>
+      <div class="early-deco" style="width:200px;height:200px;top:-60px;left:-40px"></div>
+      <div style="position:relative;z-index:1">
+        <!-- 신청자 카운터 -->
+        <div id="counter" style="display:none;justify-content:center;align-items:center;gap:8px;margin-bottom:20px">
+          <span style="width:7px;height:7px;background:#4ADE80;border-radius:50%;display:inline-block"></span>
+          <span id="counter-txt" style="font-size:13px;color:rgba(255,255,255,.8);font-weight:600"></span>
+        </div>
 
-    <!-- 실시간 신청자 카운터 -->
-    <div class="counter-badge" id="counter">
-      <span class="counter-dot"></span>
-      <span id="counter-txt"></span>
+        <h2 class="display-lg" style="font-size:clamp(28px,4vw,44px);margin-bottom:14px">
+          <span data-ko>지금 신청하면 3개월 무료</span>
+          <span data-en>Join beta — 3 months free</span>
+        </h2>
+        <p class="body-lg">
+          <span data-ko>초기 베타 참여자에게 Pro 플랜 3개월을 무료로 드립니다. 인원이 제한되어 있습니다.</span>
+          <span data-en>Early beta users get Pro free for 3 months. Limited spots available.</span>
+        </p>
+
+        <form class="early-form" id="beta-form" onsubmit="doSignup(event)" style="margin-top:32px">
+          <input type="email" class="early-input" id="beta-email"
+            placeholder="your@email.com" required autocomplete="email">
+          <button type="submit" class="btn-early" id="beta-btn">
+            <span id="btn-inner" data-ko>신청하기 →</span>
+            <span id="btn-inner" data-en>Apply →</span>
+          </button>
+        </form>
+
+        <div class="form-msg" id="msg-ok">🎉 <strong data-ko>신청 완료!</strong><strong data-en>You're in!</strong> <span data-ko>오픈 시 이메일로 알려드립니다.</span><span data-en>We'll email you at launch.</span></div>
+        <div class="form-msg" id="msg-dup">✅ <span data-ko>이미 신청하셨습니다!</span><span data-en>Already registered!</span></div>
+        <div class="form-msg" id="msg-err">⚠️ <span data-ko>오류가 발생했습니다. 잠시 후 다시 시도해주세요.</span><span data-en>Something went wrong. Please try again.</span></div>
+
+        <p class="early-note">
+          <span data-ko>스팸 없음 · 언제든 취소 가능 · 신용카드 불필요</span>
+          <span data-en>No spam · Cancel anytime · No credit card required</span>
+        </p>
+      </div>
     </div>
-
-    <h2 class="section-title reveal">
-      <span data-ko>지금 신청하면 3개월 무료</span>
-      <span data-en>Join beta — 3 months free</span>
-    </h2>
-    <p class="section-sub reveal">
-      <span data-ko>초기 베타 참여자에게 Pro 플랜 3개월을 무료로 드립니다. 인원이 제한되어 있습니다.</span>
-      <span data-en>Early beta users get Pro free for 3 months. Limited spots available.</span>
-    </p>
-
-    <!-- 폼 -->
-    <form class="early-form reveal" id="beta-form" onsubmit="doSignup(event)">
-      <input type="email" class="early-input" id="beta-email"
-        placeholder="your@email.com" required autocomplete="email">
-      <button type="submit" class="btn-submit" id="beta-btn">
-        <span id="btn-inner" data-ko>신청하기 →</span>
-        <span id="btn-inner" data-en>Apply →</span>
-      </button>
-    </form>
-
-    <!-- 상태 메시지 3종 -->
-    <div class="form-msg" id="msg-ok">
-      🎉 <strong data-ko>신청 완료!</strong><strong data-en>You're in!</strong>
-      <span data-ko> Pro 3개월 무료 혜택을 드립니다. 오픈 시 이메일로 알려드립니다.</span>
-      <span data-en> Pro free for 3 months is yours. We'll email you at launch.</span>
-    </div>
-    <div class="form-msg" id="msg-dup">
-      ✅ <span data-ko>이미 신청하셨습니다! 오픈 시 이메일로 연락드립니다.</span>
-      <span data-en>You're already on the list! We'll reach out at launch.</span>
-    </div>
-    <div class="form-msg" id="msg-err">
-      ⚠️ <span data-ko>오류가 발생했습니다. 잠시 후 다시 시도해 주세요.</span>
-      <span data-en>Something went wrong. Please try again shortly.</span>
-    </div>
-
-    <p class="early-note" data-ko>스팸 없음 · 언제든 취소 가능 · 신용카드 불필요</p>
-    <p class="early-note" data-en>No spam · Cancel anytime · No credit card required</p>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-left">
-    <a href="/" class="logo" style="font-size:18px"><span class="logo-dot"></span>Hulatform</a>
-    <span class="footer-copy">© 2026 Hulatform. All rights reserved.</span>
-  </div>
-  <div class="footer-links">
-    <a href="#" data-ko>개인정보처리방침</a><a href="#" data-en>Privacy</a>
-    <a href="#" data-ko>이용약관</a><a href="#" data-en>Terms</a>
-    <a href="mailto:hello@hulatform.com">hello@hulatform.com</a>
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-logo">Hulatform</div>
+        <div class="footer-copy">© 2026 Hulatform. AI-Native Business Identity Platform.</div>
+      </div>
+      <div class="footer-links">
+        <a href="#" data-ko>개인정보처리방침</a><a href="#" data-en>Privacy</a>
+        <a href="#" data-ko>이용약관</a><a href="#" data-en>Terms</a>
+        <a href="#" data-ko>보안</a><a href="#" data-en>Security</a>
+        <a href="mailto:hello@hulatform.com">hello@hulatform.com</a>
+      </div>
+    </div>
   </div>
 </footer>
 
+<!-- SCRIPTS -->
 <script>
-/* ── Supabase 클라이언트 ── */
-let sb = null;
-
-function initSupabase() {
-  const isPlaceholder = !SUPABASE_URL || SUPABASE_URL.includes('YOUR_')
-    || !SUPABASE_ANON || SUPABASE_ANON.includes('YOUR_');
-  if (isPlaceholder) {
-    console.warn('[Hulatform] Supabase 키 미입력. index.html 상단을 확인하세요.');
-    return false;
-  }
-  if (typeof window.supabase === 'undefined') {
-    console.warn('[Hulatform] Supabase SDK 로드 안됨. 인터넷 연결 확인.');
-    return false;
-  }
-  try {
-    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-    console.log('[Hulatform] Supabase 연결 성공 ✓');
-    return true;
-  } catch(e) {
-    console.error('[Hulatform] Supabase 초기화 실패:', e.message);
-    return false;
-  }
-}
-
-/* 언어 전환 */
+/* 언어 */
 function setLang(lang) {
   document.body.className = 'lang-' + lang;
   document.querySelectorAll('.lang-btn').forEach(b =>
     b.classList.toggle('active', b.textContent.toLowerCase() === lang));
 }
 function curLang() { return document.body.classList.contains('lang-en') ? 'en' : 'ko'; }
-function scrollToEarly() { document.getElementById('early').scrollIntoView({behavior:'smooth'}); }
 
 /* 스크롤 reveal */
 const obs = new IntersectionObserver(entries => entries.forEach(e => {
-  if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
-}), { threshold:0.1, rootMargin:'0px 0px -40px 0px' });
+  if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
+}), { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-/* 신청자 수 카운터 */
+/* Supabase init */
+let sb = null;
+function initSB() {
+  if (typeof supabase === 'undefined') return;
+  try {
+    sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    loadCounter();
+  } catch(e) { console.error('[Hulatform] Supabase init failed:', e.message); }
+}
+
+/* 카운터 */
 async function loadCounter() {
   if (!sb) return;
   try {
-    const { count } = await sb.from('beta_signups')
-      .select('*', { count:'exact', head:true });
+    const { count } = await sb.from('beta_signups').select('*', { count:'exact', head:true });
     if (count && count > 0) {
       const el = document.getElementById('counter');
       el.style.display = 'flex';
       document.getElementById('counter-txt').textContent =
-        curLang() === 'ko' ? `현재 ${count}명 신청 완료` : `${count} people joined`;
+        curLang() === 'ko' ? `${count}명이 신청했습니다` : `${count} people joined`;
     }
   } catch(e) {}
 }
 
-/* ✅ 베타 신청 — Supabase에 실제 저장 */
+/* 베타 신청 */
 async function doSignup(e) {
   e.preventDefault();
   const email = document.getElementById('beta-email').value.trim().toLowerCase();
-  const btn   = document.getElementById('beta-btn');
-  const lang  = curLang();
-
-  /* 버튼 로딩 상태 */
+  const btn = document.getElementById('beta-btn');
+  const lang = curLang();
   btn.disabled = true;
   btn.innerHTML = '<div class="spinner"></div>';
-
-  /* 메시지 초기화 */
-  ['msg-ok','msg-dup','msg-err'].forEach(id =>
-    document.getElementById(id).className = 'form-msg');
+  ['msg-ok','msg-dup','msg-err'].forEach(id => document.getElementById(id).className = 'form-msg');
 
   if (!sb) {
     document.getElementById('msg-err').className = 'form-msg err';
-    document.getElementById('msg-err').innerHTML = '⚠️ Supabase가 아직 연결되지 않았습니다. index.html 상단의 URL과 Key를 입력해 주세요.';
     btn.disabled = false;
     btn.innerHTML = lang === 'ko' ? '신청하기 →' : 'Apply →';
     return;
   }
-
   try {
-    const { error } = await sb.from('beta_signups')
-      .insert({ email, lang, source: 'landing' });
-
+    const { error } = await sb.from('beta_signups').insert({ email, lang, source: 'landing_v2' });
     if (!error) {
-      /* 성공 */
       document.getElementById('msg-ok').className = 'form-msg success';
       document.getElementById('beta-form').reset();
       btn.innerHTML = lang === 'ko' ? '신청 완료 ✓' : 'Registered ✓';
-      btn.style.background = '#34d399';
+      btn.style.color = '#10B981';
       loadCounter();
-
     } else if (error.code === '23505') {
-      /* 중복 이메일 */
       document.getElementById('msg-dup').className = 'form-msg warn';
       btn.disabled = false;
       btn.innerHTML = lang === 'ko' ? '신청하기 →' : 'Apply →';
-
-    } else {
-      throw error;
-    }
-
+    } else throw error;
   } catch(err) {
-    console.error(err);
     document.getElementById('msg-err').className = 'form-msg err';
     btn.disabled = false;
     btn.innerHTML = lang === 'ko' ? '신청하기 →' : 'Apply →';
@@ -554,15 +897,17 @@ async function doSignup(e) {
 }
 
 /* 초기화 */
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
   if (!(navigator.language || '').startsWith('ko')) setLang('en');
-  /* SDK가 defer라 DOMContentLoaded 이후 확실히 로드됨 */
-  setTimeout(function() {
-    initSupabase();
-    loadCounter();
-  }, 100);
+  setTimeout(initSB, 150);
 });
 </script>
 
+<!-- Supabase SDK — body 끝 -->
+<script
+  src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
+  onload="initSB()"
+  onerror="console.error('[Hulatform] SDK load failed')">
+</script>
 </body>
 </html>
